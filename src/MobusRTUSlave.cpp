@@ -1,10 +1,11 @@
 #include "ModbusRTUSlave.h"
 
-ModbusRTUSlave::ModbusRTUSlave(Stream& serial, uint8_t *buf, uint16_t bufSize, uint8_t dePin, uint32_t responseDelay) {
+ModbusRTUSlave::ModbusRTUSlave(Stream& serial, uint8_t *buf, uint16_t bufSize, uint8_t dePin, uint8_t rePin, uint32_t responseDelay) {
   _serial = &serial;
   _buf = buf;
   _bufSize = bufSize;
   _dePin = dePin;
+  _rePin = rePin;
   _responseDelay = responseDelay;
 }
 
@@ -49,10 +50,11 @@ void ModbusRTUSlave::begin(uint8_t id, uint32_t baud, uint8_t config) {
     _charTimeout = 15000000/baud;
     _frameTimeout = 35000000/baud;
   }
-  if (_dePin != 255) {
-    digitalWrite(_dePin, LOW);
-    pinMode(_dePin, OUTPUT);
-  }
+  if ((_dePin != 255) && (_rePin != 254)) {
+    DDRD |= (1<<5);
+    DDRB |= (1<<7);
+    PORTD &= ~(1<<5);
+    PORTB &= ~(1<<7);
   do {
     if (_serial->available() > 0) {
       startTime = micros();
@@ -199,10 +201,12 @@ void ModbusRTUSlave::_write(uint8_t len) {
     uint16_t crc = _crc(len);
     _buf[len] = lowByte(crc);
     _buf[len + 1] = highByte(crc);
-    if (_dePin != 255) digitalWrite(_dePin, HIGH);
+    PORTD |= (1<<5);
+    PORTB |= (1<<7);
     _serial->write(_buf, len + 2);
     _serial->flush();
-    if (_dePin != 255) digitalWrite(_dePin, LOW);
+    PORTD &= ~(1<<5);
+    PORTB &= ~(1<<7);
   }
 }
 
