@@ -55,6 +55,7 @@ void ModbusRTUSlave::begin(uint8_t id, uint32_t baud, uint8_t config) {
     DDRB |= (1<<7);
     PORTD &= ~(1<<5);
     PORTB &= ~(1<<7);
+  }
   do {
     if (_serial->available() > 0) {
       startTime = micros();
