@@ -1,4 +1,4 @@
-#include "ModbusRTUSlave.h"
+#include "RPModbusRTUSlave.h"
 
 ModbusRTUSlave::ModbusRTUSlave(Stream& serial, uint8_t *buf, uint16_t bufSize, uint8_t dePin, uint8_t rePin, uint32_t responseDelay) {
   _serial = &serial;
