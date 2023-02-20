@@ -1,5 +1,5 @@
-#ifndef RPModbusRTUSlave_h
-#define RPModbusRTUSlave_h
+#ifndef ModbusRTUSlave_h
+#define ModbusRTUSlave_h
 
 #define NO_DE_PIN 255
 #define NO_RE_PIN 254
